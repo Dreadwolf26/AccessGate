@@ -12,23 +12,44 @@ JWT (JSON Web Tokens): JWT.io: https://jwt.io/
 '''
 
 #import necessary libraries 
-
+from flask import Flask, render_template
+import sqlite3
+import bcrypt
 
 #Instantiate Flask
+app = Flask("__main__")
 
 
 #Establish database
+conn = sqlite3.connect("AuthDB.db")
+
+#create cursor object
+cursor = conn.cursor()
+
+#Creating table to store user information
+cursor.execute('''CREATE TABLE IF NOT EXISTS users 
+                  (id INTEGER PRIMARY KEY, username TEXT UNIQUE, password TEXT)''')
+
+#commit table creation
+conn.commit()
+
+#closing DB connection
+conn.close()
 
 
-#create index page for API usage 
+#create index page for API usage
+@app.route("/")
+def index():
+    print("Replace this with return render_template when index html is created")
 
 
-
-#create endpoint for user registration 
+#create endpoint for user registration
+@app.route("/user_registration")
+def register_user(username, password):
 
 #get user data (Username/Password)
 
-#using hashing algo to salt and hash passwords 
+#using hashing algo to salt and hash passwords with bcrypt 
 
 #commit to database
 

@@ -98,7 +98,8 @@ def login():
 
 
 #create ennd point to update password using link or code
-
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 

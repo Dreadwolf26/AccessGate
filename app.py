@@ -44,7 +44,7 @@ def index():
 
 
 #create endpoint for user registration
-@app.route("/register", method=["POST"])
+@app.route("/register", methods=["POST"])
 def register_user(username, password):
     data = request.get_json()
     username = data.get('username')
@@ -65,7 +65,7 @@ def register_user(username, password):
     return jsonify({"message": "User registered successfully"}), 201
 
 #user login route 
-@app.route("login",method=['POST'])
+@app.route("/login",methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')

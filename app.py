@@ -12,7 +12,7 @@ JWT (JSON Web Tokens): JWT.io: https://jwt.io/
 '''
 
 #import necessary libraries 
-from flask import Flask, render_template
+from flask import Flask, render_template, request,jsonify
 import sqlite3
 import bcrypt
 
@@ -44,19 +44,43 @@ def index():
 
 
 #create endpoint for user registration
-@app.route("/user_registration")
+@app.route("/register", method=["POST"])
 def register_user(username, password):
+    data = request.get_json()
+    username = data.get('username')
+    passord = data.get('password')
+    #hashing password 
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    conn = sqlite3.connect('AuthDB.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        return jsonify({"message": "User already exists"}), 400
+    finally:
+        conn.close()
 
-#get user data (Username/Password)
-
-#using hashing algo to salt and hash passwords with bcrypt 
-
-#commit to database
-
-
-
+    return jsonify({"message": "User registered successfully"}), 201
 
 #user login route 
+@app.route("login",method=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    conn = sqlite3.connect('AuthDB.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
+    row = cursor.fetchone()
+    conn.close()
+
+    if row and bcrypt.check_password_hash(row[0], password):
+        return jsonify({"message": "Login successful"}), 200
+    else:
+        return jsonify({"message": "Invalid credentials"}), 401
 
 #validate credentials and issue a json web token JWT
 
